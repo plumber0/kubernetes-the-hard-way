@@ -1,0 +1,35 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Use your existing RHEL box
+  BOX_NAME = "rhel9"
+  VM_PROVIDER = "virtualbox"
+
+  # VM definitions
+  machines = [
+    { name: "jumpbox", cpus: 1, memory: 512, disk: 10 },
+    { name: "server",  cpus: 1, memory: 2048, disk: 20 },
+    { name: "node-0",  cpus: 1, memory: 2048, disk: 20 },
+    { name: "node-1",  cpus: 1, memory: 2048, disk: 20 }
+  ]
+
+  machines.each_with_index do |machine, i|
+    config.vm.define machine[:name] do |node|
+      node.vm.box = BOX_NAME
+      node.vm.hostname = machine[:name]
+      node.vm.provider VM_PROVIDER do |vb|
+        vb.name = machine[:name]
+        vb.cpus = machine[:cpus]
+        vb.memory = machine[:memory]
+        # Optional: Resize disk if your box supports it or use linked clones
+        # Note: VirtualBox can't resize the disk unless you use a plugin or custom image
+      end
+
+      # Assign private IP (adjust if needed)
+      node.vm.network "private_network", ip: "192.168.56.1#{i + 10}"
+
+      # Optional synced folder (disable if not needed)
+      node.vm.synced_folder ".", "/vagrant", disabled: true
+    end
+  end
+end
