@@ -1,0 +1,4 @@
+IPV4_ADDRESS FQDN HOSTNAME POD_SUBNET
+192.168.56.111 server.kubernetes.local server
+192.168.56.112 node-0.kubernetes.local node-0 10.200.0.0/24
+192.168.56.113 node-1.kubernetes.local node-1 10.200.1.0/24
