@@ -112,6 +112,15 @@ while read IP FQDN HOST SUBNET; do
 done < machines.txt
 ```
 
+```bash
+grep -v '^IPV4_ADDRESS' machines.txt | while read IP FQDN HOST SUBNET; do
+    CMD="sed -i 's/^127.0.1.1.*/127.0.1.1\t${FQDN} ${HOST}/' /etc/hosts"
+    ssh -n root@${IP} "$CMD"
+    ssh -n root@${IP} hostnamectl set-hostname ${HOST}
+    ssh -n root@${IP} systemctl restart systemd-hostnamed
+done
+```
+
 Verify the hostname is set on each machine:
 
 ```bash
